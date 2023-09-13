@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Application</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Add your custom CSS styles here */
+    body {
+      background-color: #f0f0f0;
+      padding-top: 20px;
+    }
+    #chat-box {
+      height: 300px;
+      overflow-y: scroll;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Chat Room</h3>
+          </div>
+          <div class="card-body">
+            <div id="chat-box" class="mb-3">
+              <!-- Display a welcome message -->
+              <div class="message text-center text-muted">Welcome to my first chat app</div>
+            </div>
+            <form id="chat-form" class="form-inline">
+              <input id="input" class="form-control mr-2" autocomplete="off" placeholder="Type your message...">
+              <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(function () {
+      const socket = io();
+
+      $('#chat-form').submit(function () {
+        const message = $('#input').val().trim();
+        if (message !== '') {
+          socket.emit('chat message', message);
+          $('#input').val('');
+        }
+        return false;
+      });
+
+      socket.on('chat message', function (msg) {
+        $('#chat-box').append($('<div class="message">').text(msg));
+        // Automatically scroll to the bottom of the chat box
+        $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+      });
+    });
+  </script>
+</body>
+</html>
