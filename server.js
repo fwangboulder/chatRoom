@@ -11,10 +11,16 @@ app.use(express.static(__dirname + '/public'));
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  // Listen for the "join" event to capture the username
+  socket.on('join', (username) => {
+    // Broadcast a welcome message with the username
+    socket.broadcast.emit('chat message', { username, message: 'joined the chat' });
+  });
+
   // Listen for chat messages
-  socket.on('chat message', (message) => {
-    // Broadcast the message to all connected clients
-    io.emit('chat message', message);
+  socket.on('chat message', (data) => {
+    // Broadcast the message along with the username
+    io.emit('chat message', data);
   });
 
   // Listen for disconnection

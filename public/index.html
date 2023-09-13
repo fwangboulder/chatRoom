@@ -26,7 +26,7 @@
           </div>
           <div class="card-body">
             <div id="chat-box" class="mb-3">
-              <!-- Display a welcome message -->
+              <!-- Display a welcome message here -->
               <div class="message text-center text-muted">Welcome to my first chat app</div>
             </div>
             <form id="chat-form" class="form-inline">
@@ -44,18 +44,23 @@
   <script>
     $(function () {
       const socket = io();
+      let username = prompt('Enter your username:'); // Prompt for the username
+
+      // Send the username to the server
+      socket.emit('join', username);
 
       $('#chat-form').submit(function () {
         const message = $('#input').val().trim();
         if (message !== '') {
-          socket.emit('chat message', message);
+          socket.emit('chat message', { username, message }); // Send username with the message
           $('#input').val('');
         }
         return false;
       });
 
-      socket.on('chat message', function (msg) {
-        $('#chat-box').append($('<div class="message">').text(msg));
+      socket.on('chat message', function (data) {
+        const { username, message } = data;
+        $('#chat-box').append($('<div class="message">').text(`${username}: ${message}`));
         // Automatically scroll to the bottom of the chat box
         $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
       });
